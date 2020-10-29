@@ -32,8 +32,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public AppUser updateUser(@PathVariable("id") Long id,@RequestBody AppUser appUser){
-        appUser.setId(id);
+    public AppUser updateUser(@RequestBody AppUser appUser){
         return userService.save(appUser);
     }
 
