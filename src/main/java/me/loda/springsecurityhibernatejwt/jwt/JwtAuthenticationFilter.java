@@ -43,10 +43,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response, FilterChain filterChain)
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
             throws ServletException, IOException {
         try {
             String jwt = getJwtFromRequest(request);
+            System.out.println("jwtTOKEN = " + jwt);
+            if(jwt == null || tokenProvider.validateToken(jwt)){
+                System.out.println("tokenProvider.validateToken(jwt) = " + tokenProvider.validateToken(jwt));
+                System.out.println("SecurityContextHolder.getContext() = " + SecurityContextHolder.getContext());
+                SecurityContextHolder.clearContext();
+            }
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 Long userId = tokenProvider.getUserIdFromJWT(jwt);
