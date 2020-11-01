@@ -15,6 +15,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.Strings;
+import com.google.common.net.HttpHeaders;
+import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +27,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import lombok.extern.slf4j.Slf4j;
-import me.loda.springsecurityhibernatejwt.user.UserService;
+import me.loda.springsecurityhibernatejwt.user.AppUserService;
 
 /**
  * Copyright 2019 {@author Loda} (https://loda.me).
@@ -39,37 +42,49 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtTokenProvider tokenProvider;
 
     @Autowired
-    private UserService customUserDetailsService;
+    private AppUserService customUserDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-        try {
-            String jwt = getJwtFromRequest(request);
-            System.out.println("jwtTOKEN = " + jwt);
-            if(jwt == null || tokenProvider.validateToken(jwt)){
-                System.out.println("tokenProvider.validateToken(jwt) = " + tokenProvider.validateToken(jwt));
-                System.out.println("SecurityContextHolder.getContext() = " + SecurityContextHolder.getContext());
-                SecurityContextHolder.clearContext();
-            }
 
+        String jwt = getJwtFromRequest(request);
+        System.out.println("jwtTOKEN = " + jwt);
+
+//            if(jwt == null || jwt.equals("") || tokenProvider.validateToken(jwt)){
+//                System.out.println("tokenProvider.validateToken(jwt) = " + tokenProvider.validateToken(jwt));
+//                System.out.println("SecurityContextHolder.getContext() = " + SecurityContextHolder.getContext());
+////                SecurityContextHolder.clearContext();
+//                filterChain.doFilter(request, response);
+//                return;
+//
+//            }
+
+        if (Strings.isNullOrEmpty(jwt)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        try {
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 Long userId = tokenProvider.getUserIdFromJWT(jwt);
 
                 UserDetails userDetails = customUserDetailsService.loadUserById(userId);
                 if (userDetails != null) {
-                    UsernamePasswordAuthenticationToken
-                            authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
-                            userDetails
-                                    .getAuthorities());
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-        } catch (Exception ex) {
+        } catch (JwtException ex) {
             log.error("failed on set user authentication", ex);
         }
 
@@ -77,9 +92,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
+        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         // Kiểm tra xem header Authorization có chứa thông tin jwt không
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(tokenProvider.getJWT_TOKEN_PREFIX())) {
             return bearerToken.substring(7);
         }
         return null;

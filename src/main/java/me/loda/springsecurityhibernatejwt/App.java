@@ -8,14 +8,14 @@ package me.loda.springsecurityhibernatejwt;
  *    Xin cảm ơn!
  *******************************************************/
 
+import me.loda.springsecurityhibernatejwt.user.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import me.loda.springsecurityhibernatejwt.user.User;
-import me.loda.springsecurityhibernatejwt.user.UserRepository;
+import me.loda.springsecurityhibernatejwt.user.AppUserRepository;
 
 /**
  * Copyright 2019 {@author Loda} (https://loda.me).
@@ -31,7 +31,7 @@ public class App implements CommandLineRunner {
     }
 
     @Autowired
-    UserRepository userRepository;
+    AppUserRepository appUserRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
 
@@ -39,10 +39,10 @@ public class App implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Khi chương trình chạy
         // Insert vào csdl một user.
-//        User user = new User();
+//        AppUser user = new AppUser();
 //        user.setUsername("loda");
 //        user.setPassword(passwordEncoder.encode("loda"));
-//        userRepository.save(user);
+//        appUserRepository.save(user);
 //        System.out.println(user);
     }
 }

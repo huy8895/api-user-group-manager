@@ -28,7 +28,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
-    User user;
+    AppUser appUser;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -38,12 +38,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return appUser.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return appUser.getUsername();
     }
 
     @Override

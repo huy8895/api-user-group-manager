@@ -39,31 +39,11 @@ import me.loda.springsecurityhibernatejwt.user.CustomUserDetails;
 @RequestMapping("/api")
 public class LodaRestController {
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+//    @Autowired
+//    AuthenticationManager authenticationManager;
 
     @Autowired
     private JwtTokenProvider tokenProvider;
-
-    @PostMapping("/login")
-    public LoginResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
-        // Xác thực thông tin người dùng Request lên
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
-                )
-        );
-
-        // Nếu không xảy ra exception tức là thông tin hợp lệ
-        // Set thông tin authentication vào Security Context
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // Trả về jwt cho người dùng.
-        String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
-        return new LoginResponse(jwt);
-    }
 
     // Api /api/random yêu cầu phải xác thực mới có thể request
     @GetMapping("/random")

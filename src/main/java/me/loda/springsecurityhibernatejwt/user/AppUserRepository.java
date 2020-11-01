@@ -8,13 +8,8 @@ package me.loda.springsecurityhibernatejwt.user;
  *    Xin cảm ơn!
  *******************************************************/
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import lombok.Data;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  * Copyright 2019 {@author Loda} (https://loda.me).
@@ -23,15 +18,7 @@ import lombok.Data;
  * @since 4/30/2019
  * Github: https://github.com/loda-kun
  */
-@Entity
-@Table(name = "user")
-@Data
-public class User {
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @Column(nullable = false, unique = true)
-    private String username;
-    private String password;
+@Repository
+public interface AppUserRepository extends JpaRepository<AppUser, Long> {
+    AppUser findByUsername(String username);
 }

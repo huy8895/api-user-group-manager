@@ -11,6 +11,7 @@ package me.loda.springsecurityhibernatejwt.jwt;
 
 import java.util.Date;
 
+import lombok.Data;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +26,11 @@ import me.loda.springsecurityhibernatejwt.user.CustomUserDetails;
  */
 @Component
 @Slf4j
+@Data
 public class JwtTokenProvider {
-    private final String JWT_SECRET = "lodaaaaaa";
-    private final long JWT_EXPIRATION = 604800000L;
+    private final String JWT_SECRET = "huyyy";
+    private final String JWT_TOKEN_PREFIX = "Bearer ";
+    private final long JWT_EXPIRATION = 10 * 60 * 1000L;
 
     public String generateToken(CustomUserDetails userDetails) {
         // Lấy thông tin user
@@ -35,11 +38,12 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
         // Tạo chuỗi json web token từ id của user.
         return Jwts.builder()
-                   .setSubject(Long.toString(userDetails.getUser().getId()))
-                   .setIssuedAt(now)
-                   .setExpiration(expiryDate)
-                   .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
-                   .compact();
+                    .setSubject(Long.toString(userDetails.getAppUser().getId()))
+                    .claim("authorities", userDetails.getAuthorities())
+                    .setIssuedAt(now)
+                    .setExpiration(expiryDate)
+                    .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+                    .compact();
     }
 
     public Long getUserIdFromJWT(String token) {

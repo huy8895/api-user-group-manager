@@ -24,29 +24,29 @@ import org.springframework.stereotype.Service;
  * Github: https://github.com/loda-kun
  */
 @Service
-public class UserService implements UserDetailsService {
+public class AppUserService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private AppUserRepository appUserRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
         // Kiểm tra xem user có tồn tại trong database không?
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
+        AppUser appUser = appUserRepository.findByUsername(username);
+        if (appUser == null) {
             throw new UsernameNotFoundException(username);
         }
-        return new CustomUserDetails(user);
+        return new CustomUserDetails(appUser);
     }
 
     // JWTAuthenticationFilter sẽ sử dụng hàm này
     @Transactional
     public UserDetails loadUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(
+        AppUser appUser = appUserRepository.findById(id).orElseThrow(
                 () -> new UsernameNotFoundException("User not found with id : " + id)
         );
 
-        return new CustomUserDetails(user);
+        return new CustomUserDetails(appUser);
     }
 
 
