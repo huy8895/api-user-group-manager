@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import sun.security.util.SecurityConstants;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -56,5 +57,12 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                                             Authentication authResult) throws IOException, ServletException {
         String token = jwtTokenProvider.generateToken((CustomUserDetails) authResult.getPrincipal());
         response.addHeader(HttpHeaders.AUTHORIZATION, jwtTokenProvider.getJWT_TOKEN_PREFIX() + token);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(
+                "{\"" + HttpHeaders.AUTHORIZATION + "\":\"" + jwtTokenProvider.getJWT_TOKEN_PREFIX() + token + "\"}"
+        );
     }
+
+
 }

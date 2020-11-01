@@ -1,5 +1,6 @@
 package me.loda.springsecurityhibernatejwt;
 
+import lombok.var;
 import me.loda.springsecurityhibernatejwt.jwt.JwtTokenProvider;
 import me.loda.springsecurityhibernatejwt.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import me.loda.springsecurityhibernatejwt.jwt.JwtAuthenticationFilter;
 import me.loda.springsecurityhibernatejwt.user.AppUserService;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 @EnableWebSecurity
@@ -66,9 +73,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(jwtUsernameAndPasswordAuthenticationFilter())
                 .addFilterAfter(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                    .antMatchers("/api/login").permitAll() // Cho phép tất cả mọi người truy cập vào 2 địa chỉ này
+                    .antMatchers("/login").permitAll() // Cho phép tất cả mọi người truy cập vào 2 địa chỉ này
                     .anyRequest().authenticated(); // Tất cả các request khác đều cần phải xác thực mới được truy cập
 
 
+        http.cors().configurationSource(request -> {
+            CorsConfiguration cors = new CorsConfiguration();
+            cors.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+            cors.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE", "OPTIONS"));
+            cors.setAllowedHeaders(Collections.singletonList("*"));
+            return cors;
+        });
     }
 }
