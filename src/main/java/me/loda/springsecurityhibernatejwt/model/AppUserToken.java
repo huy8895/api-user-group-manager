@@ -16,7 +16,7 @@ public class AppUserToken {
 
     @ManyToOne
     private AppUser appUser;
-    @Column(columnDefinition = "text")
+    @Column(length = 350)
     private String token;
 
     public AppUserToken(AppUser appUser, String token) {

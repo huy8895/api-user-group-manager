@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String jwt = getJwtFromRequest(request);
-        System.out.println("jwtTOKEN = " + jwt);
+        System.out.println("jwtTOKEN = " + jwt.length());
 
         if (Strings.isNullOrEmpty(jwt)) {
             filterChain.doFilter(request, response);
