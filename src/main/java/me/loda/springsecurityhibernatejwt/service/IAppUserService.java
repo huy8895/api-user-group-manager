@@ -2,6 +2,7 @@ package me.loda.springsecurityhibernatejwt.service;
 
 
 import me.loda.springsecurityhibernatejwt.model.AppUser;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,4 +15,5 @@ public interface IAppUserService {
     AppUser getUserByUserName(String userName);
     boolean existsAppUserByUsername(String userName);
     AppUser findTopByOrderByIdDesc();
+    UserDetails loadUserDetailById(Long id);
 }

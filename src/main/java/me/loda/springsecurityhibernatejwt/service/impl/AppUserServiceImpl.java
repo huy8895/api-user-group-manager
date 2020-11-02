@@ -3,18 +3,15 @@ package me.loda.springsecurityhibernatejwt.service.impl;
 
 import me.loda.springsecurityhibernatejwt.Repository.IAppRoleRepository;
 import me.loda.springsecurityhibernatejwt.Repository.IAppUserRepository;
-import me.loda.springsecurityhibernatejwt.model.AppRole;
 import me.loda.springsecurityhibernatejwt.model.AppUser;
 import me.loda.springsecurityhibernatejwt.service.IAppUserService;
-import org.checkerframework.checker.units.qual.A;
+import me.loda.springsecurityhibernatejwt.jwt.user.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.text.MessageFormat;
 import java.util.*;
 
 @Service
@@ -62,10 +59,17 @@ public class AppUserServiceImpl implements UserDetailsService, IAppUserService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AppUser appUser = userRepository.findAppUserByUsername(username);
-        if (appUser == null)
+        if (appUser == null) {
             throw new UsernameNotFoundException(username);
-        Set<AppRole> roles = new HashSet<>(appUser.getRoles());
-        User user = new User(appUser.getUsername(), appUser.getPassword(), roles);
-        return user;
+        }
+        return new CustomUserDetails(appUser);
+    }
+
+    public UserDetails loadUserDetailById(Long id) {
+        AppUser appUser = userRepository.findById(id).orElseThrow(
+                () -> new UsernameNotFoundException("User not found with id : " + id)
+        );
+
+        return new CustomUserDetails(appUser);
     }
 }

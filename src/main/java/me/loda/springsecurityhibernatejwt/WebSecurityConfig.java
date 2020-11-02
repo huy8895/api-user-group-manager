@@ -1,8 +1,9 @@
 package me.loda.springsecurityhibernatejwt;
 
-import lombok.var;
 import me.loda.springsecurityhibernatejwt.jwt.JwtTokenProvider;
 import me.loda.springsecurityhibernatejwt.jwt.JwtUsernameAndPasswordAuthenticationFilter;
+import me.loda.springsecurityhibernatejwt.service.IAppUserService;
+import me.loda.springsecurityhibernatejwt.service.impl.AppUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,20 +16,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import me.loda.springsecurityhibernatejwt.jwt.JwtAuthenticationFilter;
-import me.loda.springsecurityhibernatejwt.user.AppUserService;
 import org.springframework.web.cors.CorsConfiguration;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    AppUserService appUserService;
+    AppUserServiceImpl appUserService;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;

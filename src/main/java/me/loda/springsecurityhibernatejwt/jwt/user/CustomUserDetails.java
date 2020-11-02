@@ -1,4 +1,4 @@
-package me.loda.springsecurityhibernatejwt.user;
+package me.loda.springsecurityhibernatejwt.jwt.user;
 /*******************************************************
  * For Vietnamese readers:
  *    Các bạn thân mến, mình rất vui nếu project này giúp 
@@ -9,23 +9,14 @@ package me.loda.springsecurityhibernatejwt.user;
  *******************************************************/
 
 import java.util.Collection;
-import java.util.Collections;
 
 import me.loda.springsecurityhibernatejwt.model.AppUser;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-/**
- * Copyright 2019 {@author Loda} (https://loda.me).
- * This project is licensed under the MIT license.
- *
- * @since 4/30/2019
- * Github: https://github.com/loda-kun
- */
 @Data
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
