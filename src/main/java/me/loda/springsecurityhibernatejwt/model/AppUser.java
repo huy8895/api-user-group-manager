@@ -1,4 +1,4 @@
-package me.loda.springsecurityhibernatejwt.user;
+package me.loda.springsecurityhibernatejwt.model;
 /*******************************************************
  * For Vietnamese readers:
  *    Các bạn thân mến, mình rất vui nếu project này giúp 
@@ -8,8 +8,14 @@ package me.loda.springsecurityhibernatejwt.user;
  *    Xin cảm ơn!
  *******************************************************/
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import javax.persistence.*;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * Copyright 2019 {@author Loda} (https://loda.me).
@@ -18,7 +24,18 @@ import org.springframework.stereotype.Repository;
  * @since 4/30/2019
  * Github: https://github.com/loda-kun
  */
-@Repository
-public interface AppUserRepository extends JpaRepository<AppUser, Long> {
-    AppUser findByUsername(String username);
+@Entity
+@Table(name = "user")
+@Data
+public class AppUser {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String username;
+    private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<AppRole> roles;
 }

@@ -11,6 +11,7 @@ package me.loda.springsecurityhibernatejwt.user;
 import java.util.Collection;
 import java.util.Collections;
 
+import me.loda.springsecurityhibernatejwt.model.AppUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,11 +30,10 @@ import lombok.Data;
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
     AppUser appUser;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Mặc định mình sẽ để tất cả là ROLE_USER. Để demo cho đơn giản.
-        return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+        return appUser.getRoles();
     }
 
     @Override

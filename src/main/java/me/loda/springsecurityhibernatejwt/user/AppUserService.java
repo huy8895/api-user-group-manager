@@ -10,6 +10,9 @@ package me.loda.springsecurityhibernatejwt.user;
 
 import javax.transaction.Transactional;
 
+import me.loda.springsecurityhibernatejwt.model.AppUser;
+import me.loda.springsecurityhibernatejwt.service.IAppRoleService;
+import me.loda.springsecurityhibernatejwt.service.IAppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,12 +30,11 @@ import org.springframework.stereotype.Service;
 public class AppUserService implements UserDetailsService {
 
     @Autowired
-    private AppUserRepository appUserRepository;
+    private IAppUserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        // Kiểm tra xem user có tồn tại trong database không?
-        AppUser appUser = appUserRepository.findByUsername(username);
+        AppUser appUser = userService.getUserByUserName(username);
         if (appUser == null) {
             throw new UsernameNotFoundException(username);
         }
@@ -42,7 +44,7 @@ public class AppUserService implements UserDetailsService {
     // JWTAuthenticationFilter sẽ sử dụng hàm này
     @Transactional
     public UserDetails loadUserById(Long id) {
-        AppUser appUser = appUserRepository.findById(id).orElseThrow(
+        AppUser appUser = userService.getUserById(id).orElseThrow(
                 () -> new UsernameNotFoundException("User not found with id : " + id)
         );
 

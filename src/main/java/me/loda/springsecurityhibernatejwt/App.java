@@ -8,14 +8,22 @@ package me.loda.springsecurityhibernatejwt;
  *    Xin cảm ơn!
  *******************************************************/
 
-import me.loda.springsecurityhibernatejwt.user.AppUser;
+import me.loda.springsecurityhibernatejwt.Repository.IAppRoleRepository;
+import me.loda.springsecurityhibernatejwt.model.AppRole;
+import me.loda.springsecurityhibernatejwt.model.AppUser;
+import me.loda.springsecurityhibernatejwt.service.IAppRoleService;
+import me.loda.springsecurityhibernatejwt.service.IAppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import me.loda.springsecurityhibernatejwt.user.AppUserRepository;
+import javax.annotation.PostConstruct;
+import javax.management.relation.Role;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Copyright 2019 {@author Loda} (https://loda.me).
@@ -31,18 +39,33 @@ public class App implements CommandLineRunner {
     }
 
     @Autowired
-    AppUserRepository appUserRepository;
+    IAppUserService appUserService;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    IAppRoleService roleService;
 
     @Override
     public void run(String... args) throws Exception {
         // Khi chương trình chạy
         // Insert vào csdl một user.
-//        AppUser user = new AppUser();
-//        user.setUsername("loda");
-//        user.setPassword(passwordEncoder.encode("loda"));
-//        appUserRepository.save(user);
-//        System.out.println(user);
+        AppUser user = new AppUser();
+        user.setUsername("huy");
+        user.setPassword(passwordEncoder.encode("huy"));
+        Set<AppRole> roles = new HashSet<>();
+        roleService.save(new AppRole("ROLE_ADMIN"));
+        roleService.save(new AppRole("ROLE_USER"));
+        roles.add(roleService.getRoleByName("ROLE_ADMIN"));
+        roles.add(roleService.getRoleByName("ROLE_USER"));
+        user.setRoles(roles);
+        appUserService.save(user);
+        System.out.println(user);
+    }
+
+    @PostConstruct
+    public void init(){
+        if(roleService.getAllRole() == null){
+
+        }
     }
 }
