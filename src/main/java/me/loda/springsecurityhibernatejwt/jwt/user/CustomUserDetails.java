@@ -23,7 +23,6 @@ public class CustomUserDetails implements UserDetails {
     AppUser appUser;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Mặc định mình sẽ để tất cả là ROLE_USER. Để demo cho đơn giản.
         return appUser.getRoles();
     }
 

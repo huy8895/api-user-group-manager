@@ -2,8 +2,8 @@ package me.loda.springsecurityhibernatejwt;
 
 import me.loda.springsecurityhibernatejwt.jwt.JwtTokenProvider;
 import me.loda.springsecurityhibernatejwt.jwt.JwtUsernameAndPasswordAuthenticationFilter;
-import me.loda.springsecurityhibernatejwt.service.IAppUserService;
 import me.loda.springsecurityhibernatejwt.service.impl.AppUserServiceImpl;
+import me.loda.springsecurityhibernatejwt.service.impl.AppUserTokenServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -31,33 +31,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    @Autowired
+    private AppUserTokenServiceImpl appUserTokenService;
+
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
     }
 
     public JwtUsernameAndPasswordAuthenticationFilter jwtUsernameAndPasswordAuthenticationFilter() throws Exception {
-        return new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtTokenProvider);
+        return new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtTokenProvider, appUserTokenService);
     }
 
-//    @Bean(BeanIds.AUTHENTICATION_MANAGER)
-//    @Override
-//    public AuthenticationManager authenticationManagerBean() throws Exception {
-//        // Get AuthenticationManager Bean
-//        return super.authenticationManagerBean();
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Password encoder, để Spring Security sử dụng mã hóa mật khẩu người dùng
         return new BCryptPasswordEncoder();
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
-        auth.userDetailsService(appUserService) // Cung cáp userservice cho spring security
-            .passwordEncoder(passwordEncoder()); // cung cấp password encoder
+        auth.userDetailsService(appUserService)
+            .passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -71,8 +67,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(jwtUsernameAndPasswordAuthenticationFilter())
                 .addFilterAfter(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                    .antMatchers("/login").permitAll() // Cho phép tất cả mọi người truy cập vào 2 địa chỉ này
-                    .anyRequest().authenticated(); // Tất cả các request khác đều cần phải xác thực mới được truy cập
+                    .antMatchers("/login").permitAll()
+                    .anyRequest().authenticated();
+
 
 
         http.cors().configurationSource(request -> {

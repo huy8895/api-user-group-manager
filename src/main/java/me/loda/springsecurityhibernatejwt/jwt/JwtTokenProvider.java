@@ -3,6 +3,8 @@ package me.loda.springsecurityhibernatejwt.jwt;
 import java.util.Date;
 
 import lombok.Data;
+import me.loda.springsecurityhibernatejwt.service.impl.AppUserTokenServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +14,7 @@ import me.loda.springsecurityhibernatejwt.jwt.user.CustomUserDetails;
 @Slf4j
 @Data
 public class JwtTokenProvider {
-    private final String JWT_SECRET = "huyyy";
+    private final String JWT_SECRET = "HM2T";
     private final String JWT_TOKEN_PREFIX = "Bearer ";
     private final long JWT_EXPIRATION = 10 * 60 * 1000L;
 

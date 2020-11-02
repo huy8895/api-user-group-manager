@@ -1,8 +1,10 @@
 package me.loda.springsecurityhibernatejwt.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.loda.springsecurityhibernatejwt.model.AppUserToken;
 import me.loda.springsecurityhibernatejwt.payload.LoginRequest;
 import me.loda.springsecurityhibernatejwt.jwt.user.CustomUserDetails;
+import me.loda.springsecurityhibernatejwt.service.impl.AppUserTokenServiceImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,11 +21,13 @@ import java.io.IOException;
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AppUserTokenServiceImpl appUserTokenService;
 
     public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authenticationManager,
-                                                      JwtTokenProvider jwtTokenProvider) {
+                                                      JwtTokenProvider jwtTokenProvider, AppUserTokenServiceImpl appUserTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.appUserTokenService = appUserTokenService;
     }
 
     @Override
@@ -49,7 +53,9 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
-        String token = jwtTokenProvider.generateToken((CustomUserDetails) authResult.getPrincipal());
+        CustomUserDetails principal = (CustomUserDetails) authResult.getPrincipal();
+        String token = jwtTokenProvider.generateToken(principal);
+        appUserTokenService.saveUserToke(new AppUserToken(principal.getAppUser(),token));
         response.addHeader(HttpHeaders.AUTHORIZATION, jwtTokenProvider.getJWT_TOKEN_PREFIX() + token);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

@@ -49,23 +49,25 @@ public class App implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Khi chương trình chạy
         // Insert vào csdl một user.
-        AppUser user = new AppUser();
-        user.setUsername("huy");
-        user.setPassword(passwordEncoder.encode("huy"));
-        Set<AppRole> roles = new HashSet<>();
-        roleService.save(new AppRole("ROLE_ADMIN"));
-        roleService.save(new AppRole("ROLE_USER"));
-        roles.add(roleService.getRoleByName("ROLE_ADMIN"));
-        roles.add(roleService.getRoleByName("ROLE_USER"));
-        user.setRoles(roles);
-        appUserService.save(user);
-        System.out.println(user);
+        Iterable<AppRole> allRole = roleService.getAllRole();
+        if(!allRole.iterator().hasNext()){
+            AppUser user = new AppUser();
+            user.setUsername("huy");
+            user.setPassword(passwordEncoder.encode("huy"));
+            Set<AppRole> roles = new HashSet<>();
+            roleService.save(new AppRole("ROLE_ADMIN"));
+            roleService.save(new AppRole("ROLE_USER"));
+            roles.add(roleService.getRoleByName("ROLE_ADMIN"));
+            roles.add(roleService.getRoleByName("ROLE_USER"));
+            user.setRoles(roles);
+            appUserService.save(user);
+            System.out.println(user);
+        }
+
     }
 
     @PostConstruct
     public void init(){
-        if(roleService.getAllRole() == null){
 
-        }
     }
 }
